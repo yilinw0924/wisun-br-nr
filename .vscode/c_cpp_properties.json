@@ -1,0 +1,25 @@
+{
+  "configurations": [
+    {
+      "name": "Win-GCC",
+      "includePath": [
+        "${workspaceFolder}/**",
+        "${workspaceFolder}/platform",
+        "${workspaceFolder}/wisun",
+        "${workspaceFolder}/common",
+        "${workspaceFolder}/drivers",
+        "${workspaceFolder}/boards",
+        "${workspaceFolder}/simplicity_sdk_2025.6.2/platform/emlib/inc",
+        "${workspaceFolder}/simplicity_sdk_2025.6.2/platform/Device/SiliconLabs/EFR32FG25/Include",
+        "${workspaceFolder}/simplicity_sdk_2025.6.2/protocol/wisun/stack/inc",
+        "${workspaceFolder}/simplicity_sdk_2025.6.2/protocol/wisun/plugin"
+      ],
+      "defines": ["EFR32FG25"],
+      "compilerPath": "C:/SiliconLabs/SimplicityStudio/v5/developer/toolchains/gnu_arm/12.2.rel1_2023.7/bin/arm-none-eabi-gcc.exe",
+      "cStandard": "gnu11",
+      "cppStandard": "gnu++17",
+      "intelliSenseMode": "gcc-x64"
+    }
+  ],
+  "version": 4
+}

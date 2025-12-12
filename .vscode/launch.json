@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug BR (J-Link)",
+      "cwd": "${workspaceFolder}",
+      "executable": "${workspaceFolder}/build/br.elf",
+      "request": "launch",
+      "type": "cortex-debug",
+      "servertype": "jlink",
+      "device": "EFR32FG25A121F1152IM56",
+      "interface": "swd",
+      "runToMain": true,
+      "preLaunchTask": "Build BR"
+    },
+    {
+      "name": "Debug NR (J-Link)",
+      "cwd": "${workspaceFolder}",
+      "executable": "${workspaceFolder}/build/nr.elf",
+      "request": "launch",
+      "type": "cortex-debug",
+      "servertype": "jlink",
+      "device": "EFR32FG25A121F1152IM56",
+      "interface": "swd",
+      "runToMain": true,
+      "preLaunchTask": "Build NR"
+    }
+  ]
+}

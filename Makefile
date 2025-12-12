@@ -1,47 +1,47 @@
 ###############################################################################
-# Top-Level Makefile for Wi-SUN BR/NR Firmware
-# Target MCU: EFR32FG25A121F1152IM56 (Ebyte E51)
+# Top-level Makefile for VS Code build using Simplicity standalone SDK
 ###############################################################################
 
-# Default target
-TARGET ?= br
+SILABS_SDK ?= $(CURDIR)/simplicity_sdk_2025.6.2   # <<-- edit to actual path
+TOOLCHAIN ?= C:/SiliconLabs/SimplicityStudio/v5/developer/toolchains/gnu_arm/12.2.rel1_2023.7/bin
+CC := $(TOOLCHAIN)/arm-none-eabi-gcc
+OBJCOPY := $(TOOLCHAIN)/arm-none-eabi-objcopy
 
-# Toolchain (Simplicity Studio installs this here)
-TOOLCHAIN_PATH ?= /opt/SimplicityStudio_v5/developer/toolchains/gnu_arm/10.3_2021.10/bin
-CC      := $(TOOLCHAIN_PATH)/arm-none-eabi-gcc
-LD      := $(TOOLCHAIN_PATH)/arm-none-eabi-gcc
-AR      := $(TOOLCHAIN_PATH)/arm-none-eabi-ar
-OBJCOPY := $(TOOLCHAIN_PATH)/arm-none-eabi-objcopy
-
-# Output directory
 BUILD_DIR := build
-
-# Board linker script
 LDSCRIPT := ldscripts/efr32fg25.ld
 
-# Default build
+INCLUDES := -Iplatform -Iwsun -Icommon -Idrivers -Iboards/board_v1_3 \
+            -I"$(SILABS_SDK)/platform/CMSIS/Core/Include" \
+			-I"$(SILABS_SDK)/platform/common/inc" \
+            -I"$(SILABS_SDK)/platform/Device/SiliconLabs/EFR32FG25/Include" \
+			-I"$(SILABS_SDK)/platform/driver/gpio/inc" \
+            -I"$(SILABS_SDK)/platform/emlib/inc" \
+			-I"$(SILABS_SDK)/platform/peripheral/inc" \
+            -I"$(SILABS_SDK)/protocol/wisun/stack/inc" \
+            -I"$(SILABS_SDK)/protocol/wisun/plugin" \
+            -I"$(SILABS_SDK)/protocol/wisun/plugin/cli_util"
+
+LDFLAGS := -L"$(SILABS_SDK)/protocol/wisun/stack/lib" \
+           -L"$(SILABS_SDK)/platform/radio/rail_lib/autogen/librail_release" \
+           -lwisunstack -lnanostack -lwisun_network -lrail_efr32xg25_gcc_release
+
+CFLAGS := -mcpu=cortex-m33 -mthumb -O2 -g3 -ffunction-sections -fdata-sections \
+          $(INCLUDES) -DUSE_WISUN_SDK=0
+
+# Targets
 all: br nr
 
 br:
-	$(MAKE) -C app/br CC=$(CC) LD=$(LD) OBJCOPY=$(OBJCOPY) \
-		BUILD_DIR=$(abspath $(BUILD_DIR)) \
-		LDSCRIPT=$(abspath $(LDSCRIPT))
+	@mkdir -p $(BUILD_DIR)
+	$(MAKE) -C app/br CC="$(CC)" OBJCOPY="$(OBJCOPY)" BUILD_DIR="$(abspath $(BUILD_DIR))" LDSCRIPT="$(abspath $(LDSCRIPT))" SILABS_SDK="$(SILABS_SDK)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 nr:
-	$(MAKE) -C app/nr CC=$(CC) LD=$(LD) OBJCOPY=$(OBJCOPY) \
-		BUILD_DIR=$(abspath $(BUILD_DIR)) \
-		LDSCRIPT=$(abspath $(LDSCRIPT))
+	@mkdir -p $(BUILD_DIR)
+	$(MAKE) -C app/nr CC="$(CC)" OBJCOPY="$(OBJCOPY)" BUILD_DIR="$(abspath $(BUILD_DIR))" LDSCRIPT="$(abspath $(LDSCRIPT))" SILABS_SDK="$(SILABS_SDK)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 clean:
-	$(MAKE) -C app/br clean
-	$(MAKE) -C app/nr clean
-	$(MAKE) -C platform clean
+	$(MAKE) -C app/br clean || true
+	$(MAKE) -C app/nr clean || true
 	rm -rf $(BUILD_DIR)
 
-flash:
-	tools/flash.sh $(TARGET)
-
-open-studio:
-	tools/gen_studio_project.sh
-
-.PHONY: all br nr clean flash open-studio
+.PHONY: all br nr clean
